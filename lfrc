@@ -1,0 +1,117 @@
+###########
+# Options #
+###########
+
+set icons on
+set incsearch on
+set incfilter on
+set ratios '2:3'
+set number on
+set shell 'zsh'
+set previewer ~/.config/lf/previewer.sh
+set cleaner ~/.config/lf/cleaner.sh
+
+
+############
+# Mappings #
+############
+
+# Remove toggle and clear delete, copy selection or filter
+map <esc> :unselect; clear; setfilter
+
+# unmap original (toggle-selection)
+map <space>
+map <space><space> %{{
+    read response
+    lf -remote "send cd '$(autojump $response)'"
+}}
+map <space>b $btop
+map <space>g $lazygit
+map <space>j+ $autojump -i 100
+map <space>j- $autojump -d 100
+map <space>j? $autojump -s|less
+
+# extract zip
+map <space>zx %{{
+    mimetype="$( file --dereference --brief --mime-type -- "$f" )"
+    if [[ $mimetype = "application/x-tar" || $mimetype = "application/gzip" || $mimetype = "application/zip" ]]; then
+        extract_path=${f%%.*}
+        path_backoff=$(test -e ${extract_path} && echo 1)
+
+        if test -n "${path_backoff}"; then
+            while test -e ${extract_path}${path_backoff}; do
+                path_backoff=$((path_backoff + 1))
+            done
+            extract_path=${extract_path}${path_backoff}
+        fi
+        mkdir -p ${extract_path}
+        tar -xf $f --directory ${extract_path}
+        echo "Extracted to ${extract_path}"
+    else
+        echo "Extraction of this filetype is not supported"
+    fi
+}}
+cmd zip %{{
+    if [[ $fs == "" ]]; then
+        echo "Please select the file to archive"
+    else
+        zip_name=""
+        while [[ $zip_name = "" ]]; do
+            read zip_name
+        done
+
+        files=""
+        for file in ${(f)fs}; do
+            if [[ "${PWD}" != "$(dirname $file)" ]]; then
+                echo "Unable to make archive with selection from different folder"
+                exit 1
+            fi
+            files="${files} '$(basename $file)'"
+        done
+
+        case "$1" in
+            tar)
+                eval "tar -cf \"${zip_name}.tar\"$files";;
+            gzip)
+                eval "tar -czf \"${zip_name}.tar.gz\"$files";;
+            zip)
+                eval "zip \"${zip_name}.zip\"$files";;
+            *)
+                echo "${1} is a supported zip type"
+        esac
+    fi
+}}
+# create zip - tar
+map <space>zct :zip tar
+map <space>zcz :zip zip
+map <space>zcg :zip gzip
+map <c-space> ${{
+    selected=$(fd --no-ignore|fzf || echo .)
+    lf -remote "send cd $(dirname ${selected})"
+    lf -remote "send select $(basename ${selected})"
+}}
+
+map <tab> :toggle; down
+map <backtab> :up; toggle
+map <enter> :open
+map <c-h> :set hidden!
+map <c-n> :down
+map <c-p> :up
+
+map a :add %{{
+    read r
+    [[ $r = */ ]] && mkdir -p $r || (mkdir -p `dirname $r` && touch $r)
+}}
+map e ${{
+    (test -z $f -o -d $f && echo ""\$nvim"" || echo "\$nvim $f") > ~/.config/lf/cmd
+    lf -remote "send quit"
+}}
+map f :filter
+map F
+map gd :cd ~/Downloads/
+map R :reload
+# Select all
+map V :unselect; invert
+map x delete
+
+# vim: ft=vim
