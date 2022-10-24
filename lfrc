@@ -21,15 +21,15 @@ map <esc> :unselect; clear; setfilter
 
 # unmap original (toggle-selection)
 map <space>
-map <space><space> %{{
-    read response
-    lf -remote "send cd '$(autojump $response)'"
-}}
 map <space>b $btop
 map <space>g $lazygit
 map <space>j+ $autojump -i 100
 map <space>j- $autojump -d 100
 map <space>j? $autojump -s|less
+map <backspace2> %{{
+    read response
+    lf -remote "send cd '$(autojump $response)'"
+}}
 
 # extract zip
 map <space>zx %{{
