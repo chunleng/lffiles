@@ -28,7 +28,7 @@ map <space>j- $autojump -d 100
 map <space>j? $autojump -s|less
 map <backspace2> %{{
     read response
-    lf -remote "send cd '$(autojump $response)'"
+    lf -remote "send ${id} cd '$(autojump $response)'"
 }}
 
 # extract zip
@@ -87,8 +87,8 @@ map <space>zcz :zip zip
 map <space>zcg :zip gzip
 map <c-space> ${{
     selected=$(fd --no-ignore|fzf || echo .)
-    lf -remote "send cd $(dirname ${selected})"
-    lf -remote "send select $(basename ${selected})"
+    lf -remote "send ${id} cd $(dirname ${selected})"
+    lf -remote "send ${id} select $(basename ${selected})"
 }}
 
 map <tab> :toggle; down
@@ -104,7 +104,7 @@ map a :add %{{
 }}
 map e ${{
     (test -z $f -o -d $f && echo ""\$nvim"" || echo "\$nvim $f") > ~/.config/lf/cmd
-    lf -remote "send quit"
+    lf -remote "send ${id} quit"
 }}
 map f :filter
 map F
