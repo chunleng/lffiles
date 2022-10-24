@@ -10,6 +10,7 @@ set number on
 set shell 'zsh'
 set previewer ~/.config/lf/previewer.sh
 set cleaner ~/.config/lf/cleaner.sh
+set promptfmt "\033[38;5;240m【  %u  %h 】\033[1m%w \033[38;5;0m\033[48;5;3m%F"
 
 
 ############
