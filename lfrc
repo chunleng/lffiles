@@ -36,7 +36,8 @@ map <enter> %{{
 map <space>zx %{{
     mimetype="$( file --dereference --brief --mime-type -- "$f" )"
     if [[ $mimetype = "application/x-tar" || $mimetype = "application/gzip" || $mimetype = "application/zip" ]]; then
-        extract_path=${f%%.*}
+        extract_filename=$(basename $f)
+        extract_path=./${extract_filename%%.*}
         path_backoff=$(test -e ${extract_path} && echo 1)
 
         if test -n "${path_backoff}"; then
@@ -45,8 +46,8 @@ map <space>zx %{{
             done
             extract_path=${extract_path}${path_backoff}
         fi
-        mkdir -p ${extract_path}
-        tar -xf $f --directory ${extract_path}
+        mkdir -p "${extract_path}"
+        tar -xf $f --directory "${extract_path}"
         echo "Extracted to ${extract_path}"
     else
         echo "Extraction of this filetype is not supported"
