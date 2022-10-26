@@ -27,7 +27,7 @@ map <space>g $lazygit
 map <space>j+ $autojump -i 100
 map <space>j- $autojump -d 100
 map <space>j? $autojump -s|less
-map <backspace2> %{{
+map <enter> %{{
     read response
     lf -remote "send ${id} cd '$(autojump $response)'"
 }}
@@ -94,7 +94,6 @@ map <c-space> ${{
 
 map <tab> :toggle; down
 map <backtab> :up; toggle
-map <enter> :open
 map <c-h> :set hidden!
 map <c-n> :down
 map <c-p> :up
