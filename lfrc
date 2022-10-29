@@ -28,6 +28,7 @@ map <space>j+ $autojump -i 100
 map <space>j- $autojump -d 100
 map <space>j? $autojump -s|less
 map <enter> %{{
+    echo "Jump to: "
     read response
     lf -remote "send ${id} cd '$(autojump $response)'"
 }}
@@ -59,6 +60,7 @@ cmd zip %{{
     else
         zip_name=""
         while [[ $zip_name = "" ]]; do
+            echo "Archive Name: "
             read zip_name
         done
 
@@ -100,6 +102,7 @@ map <c-n> :down
 map <c-p> :up
 
 map a :add %{{
+    echo "File or Dir/: "
     read r
     [[ $r = */ ]] && mkdir -p $r || (mkdir -p `dirname $r` && touch $r)
 }}
