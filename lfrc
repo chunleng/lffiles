@@ -101,7 +101,7 @@ map <c-h> :set hidden!
 map <c-n> :down
 map <c-p> :up
 
-map a :add %{{
+map a %{{
     echo "File or Dir/: "
     read r
     [[ $r = */ ]] && mkdir -p $r || (mkdir -p `dirname $r` && touch $r)
