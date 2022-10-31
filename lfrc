@@ -108,7 +108,7 @@ map a %{{
 }}
 
 # using `$SHELL` and `cd .` to ensure direnv is working
-map e $$SHELL --interactive --login -c "cd . && nvim \$(test -z $f -o -d $f || echo $f)"
+map e $$SHELL --interactive --login -c "cd . && nvim \$(test -z '$f' -o -d '$f' || echo '$f')"
 map f :filter
 map F
 map gd :cd ~/Downloads/
