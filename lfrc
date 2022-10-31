@@ -17,13 +17,17 @@ set promptfmt "\033[38;5;240m【  %u  %h 】\033[1m%w \033[38;5;0m\033[48;
 # Mappings #
 ############
 
+# using `$SHELL` and `cd .` to ensure direnv is working
+cmd direnv_shell ${{
+    $SHELL --interactive --login -c "cd . && $1"
+}}
 # Remove toggle and clear delete, copy selection or filter
 map <esc> :unselect; clear; setfilter
 
 # unmap original (toggle-selection)
 map <space>
 map <space>b $btop
-map <space>g $lazygit
+map <space>g :direnv_shell lazygit
 map <space>j+ $autojump -i 100
 map <space>j- $autojump -d 100
 map <space>j? $autojump -s|less
@@ -107,8 +111,10 @@ map a %{{
     [[ $r = */ ]] && mkdir -p $r || (mkdir -p `dirname $r` && touch $r)
 }}
 
-# using `$SHELL` and `cd .` to ensure direnv is working
-map e $$SHELL --interactive --login -c "cd . && nvim \$(test -z '$f' -o -d '$f' || echo '$f')"
+map e ${{
+    filepath=$(test -z "$f" -o -d "$f" || echo "'$f'")
+    lf -remote "send ${id} direnv_shell \"nvim ${filepath}\""
+}}
 map f :filter
 map F
 map gd :cd ~/Downloads/
