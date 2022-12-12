@@ -118,6 +118,8 @@ map e ${{
 map f :filter
 map F
 map gd :cd ~/Downloads/
+# Vim plugin folder
+map gv :cd ~/.local/share/nvim/site/pack/packer
 map R :reload
 # Select all
 map V :unselect; invert
