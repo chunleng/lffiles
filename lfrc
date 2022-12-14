@@ -125,4 +125,12 @@ map R :reload
 map V :unselect; invert
 map x delete
 
+cmd chmod $eval "chmod $1 $f"
+map +r :chmod +r; reload
+map -r :chmod -r; reload
+map +w :chmod +w; reload
+map -w :chmod -w; reload
+map +x :chmod +x; reload
+map -x :chmod -x; reload
+
 # vim: syntax=vim:commentstring=#\ %s
