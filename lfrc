@@ -190,4 +190,40 @@ export PATH=${VIRTUAL_ENV}/bin:${PATH}' > .envrc
 }}
 map <space>cpp :poetry_init
 map <space>cpf :poetry_init fastapi
+
+# <space>cj for java
+cmd gradle_init ${{
+    set -eu
+    trap 'catch' ERR
+    function catch() {
+        read 'response?Project init failed...'
+        exit 1
+    }
+
+    echo
+    example_java='oracle-19.0.2'
+    read 'path_name?Choose folder name: '
+    read "java_version?Choose Java version (${example_java}): "
+
+    if [ -z "${java_version}" ]; then
+        java_version=${example_java}
+    fi
+
+    mkdir -p ${path_name}
+    cd ${path_name}
+    asdf local java ${java_version} || \
+        (echo 'Java version not yet installed, installing now...' && \
+         asdf install java ${java_version} && \
+         asdf local java ${java_version})
+
+    if [ $? -eq 0 ]; then
+        gradle init \
+            --type java-application \
+            --test-framework junit-jupiter \
+            --dsl groovy \
+            --project-name `basename ${path_name}` \
+            --package `basename ${path_name}`
+    fi
+}}
+map <space>cjj :gradle_init
 # vim: syntax=vim:commentstring=#\ %s
