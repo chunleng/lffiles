@@ -135,4 +135,59 @@ map -w :chmod -w; reload
 map +x :chmod +x; reload
 map -x :chmod -x; reload
 
+# <space>c for code template function
+# <space>cp for python
+cmd poetry_init ${{
+    set -eu
+    trap 'catch' ERR
+    function catch() {
+        read 'response?Project init failed...'
+        exit 1
+    }
+
+    package_to_install=""
+    for package in "$@"; do
+        package_to_install="${package_to_install} --dependency=${package}"
+    done
+
+    echo
+    latest_python=$(asdf latest python)
+    read 'path_name?Choose folder name: '
+    read "py_version?Choose Python version (${latest_python}): "
+
+    if [ -z "${py_version}" ]; then
+        py_version=${latest_python}
+    fi
+
+    mkdir -p ${path_name}
+    cd ${path_name}
+    asdf local python ${py_version} || \
+        (echo 'Python version not yet installed, installing now...' && \
+         asdf install python ${py_version} && \
+         asdf local python ${py_version} && \
+         pip install poetry)
+
+    if [ $? -eq 0 ]; then
+        eval poetry init -n \
+            --dev-dependency=pyright \
+            --dev-dependency=isort \
+            --dev-dependency=black \
+            ${package_to_install}
+        poetry install
+
+        # Standard structure
+        mkdir src
+        touch main.py
+
+        # Direnv setup
+        echo '# Since we are expecting the virtualenv to be in the same folder,
+# we need to make poetry create the virtualenv in the same folder by doing the following
+#   poetry config virtualenvs.in-project true
+export VIRTUAL_ENV=`pwd`/.venv
+export PATH=${VIRTUAL_ENV}/bin:${PATH}' > .envrc
+        direnv allow .
+    fi
+}}
+map <space>cpp :poetry_init
+map <space>cpf :poetry_init fastapi
 # vim: syntax=vim:commentstring=#\ %s
