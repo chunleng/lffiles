@@ -168,16 +168,21 @@ cmd poetry_init ${{
          pip install poetry)
 
     if [ $? -eq 0 ]; then
+        # Standard structure
+        mkdir ${path_name}
+        touch ${path_name}/__init__.py
+        touch main.py
+        touch README.md
+        echo '.venv' > .gitignore
+        git init
+
+        poetry config virtualenvs.in-project true --local
         eval poetry init -n \
             --dev-dependency=pyright \
             --dev-dependency=isort \
             --dev-dependency=black \
             ${package_to_install}
         poetry install
-
-        # Standard structure
-        mkdir src
-        touch main.py
 
         # Direnv setup
         echo '# Since we are expecting the virtualenv to be in the same folder,
