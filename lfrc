@@ -20,7 +20,8 @@ set promptfmt "\033[38;5;240m【  %u  %h 】\033[1m%w \033[38;5;0m\033[48;
 
 # using `$SHELL` and `cd .` to ensure direnv is working
 cmd direnv_shell ${{
-    $SHELL --interactive --login -c "cd . && $1"
+    # Used -s to read from standard in instead of zsh -c option because lf creates an extra zombie zsh process
+    echo "cd . && $1" | $SHELL --interactive -s
 }}
 # Remove toggle and clear delete, copy selection or filter
 map <esc> :unselect; clear; setfilter
