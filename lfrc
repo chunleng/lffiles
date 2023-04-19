@@ -237,4 +237,24 @@ cmd gradle_init ${{
     fi
 }}
 map <space>cjj :gradle_init
+
+cmd download ${{
+    if [ -n "$1" ]; then
+        url=$1
+    else
+        read "url?Download URL: "
+    fi
+
+    output_path=$(basename $url)
+    if [ -f $output_path ]; then
+        read -k 1 "response?${output_path} already exist, continue? [y/N]: "
+        case $response in
+            [yY]) ;;
+            *) exit 1;;
+        esac
+    fi
+
+    curl -L "$url" -o $output_path
+}}
+map <space>d :download
 # vim: syntax=vim:commentstring=#\ %s
