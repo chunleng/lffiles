@@ -2,13 +2,12 @@
 # Options #
 ###########
 
-set icons on
-set incsearch on
-set incfilter on
+set icons true
+set incsearch true
+set incfilter true
 set ratios '2:3'
-set number on
-set shell 'zsh'
-set dirpreviews off
+set number true
+set dirpreviews false
 set previewer ~/.config/lf/previewer.sh
 set cleaner ~/.config/lf/cleaner.sh
 set promptfmt "\033[38;5;240m【  %u  %h 】\033[1m%w \033[38;5;0m\033[48;5;3m%F"
