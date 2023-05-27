@@ -151,7 +151,7 @@ cmd poetry_init ${{
     set -eu
     trap 'catch' ERR
     function catch() {
-        read 'response?Project init failed...'
+        read -p 'Project init failed...' response
         exit 1
     }
 
@@ -162,8 +162,8 @@ cmd poetry_init ${{
 
     echo
     latest_python=$(asdf latest python)
-    read 'path_name?Choose folder name: '
-    read "py_version?Choose Python version (${latest_python}): "
+    read -p 'Choose folder name: ' path_name
+    read -p "Choose Python version (${latest_python}): " py_version
 
     if [ -z "${py_version}" ]; then
         py_version=${latest_python}
@@ -211,14 +211,14 @@ cmd gradle_init ${{
     set -eu
     trap 'catch' ERR
     function catch() {
-        read 'response?Project init failed...'
+        read -p 'Project init failed...' response
         exit 1
     }
 
     echo
     example_java='oracle-19.0.2'
-    read 'path_name?Choose folder name: '
-    read "java_version?Choose Java version (${example_java}): "
+    read -p 'Choose folder name: ' path_name
+    read -p "Choose Java version (${example_java}): " java_version
 
     if [ -z "${java_version}" ]; then
         java_version=${example_java}
@@ -243,15 +243,16 @@ cmd gradle_init ${{
 map <space>cjj :gradle_init
 
 cmd download ${{
+
     if [ -n "$1" ]; then
         url=$1
     else
-        read "url?Download URL: "
+        read -p "Download URL: " url
     fi
 
     output_path=$(basename $url)
     if [ -f $output_path ]; then
-        read -k 1 "response?${output_path} already exist, continue? [y/N]: "
+        read -n 1 -p "${output_path} already exist, continue? [y/N]: " response
         case $response in
             [yY]) ;;
             *) exit 1;;
