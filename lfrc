@@ -53,7 +53,12 @@ map <space>zx %{{
             extract_path=${extract_path}${path_backoff}
         fi
         mkdir -p "${extract_path}"
-        tar -xf $f --directory "${extract_path}"
+
+        if [[ $mimetype = "application/x-tar" || $mimetype = "application/gzip" ]]; then
+            tar -xf $f --directory "${extract_path}"
+        else
+            unzip $f -d "${extract_path}"
+        fi
         echo "Extracted to ${extract_path}"
     else
         echo "Extraction of this filetype is not supported"
