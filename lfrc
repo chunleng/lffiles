@@ -75,7 +75,7 @@ cmd zip %{{
         done
 
         files=""
-        for file in ${(f)fs}; do
+        for file in ${fs}; do
             if [[ "${PWD}" != "$(dirname $file)" ]]; then
                 echo "Unable to make archive with selection from different folder"
                 exit 1
