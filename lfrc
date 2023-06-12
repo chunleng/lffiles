@@ -118,8 +118,9 @@ map a %{{
 }}
 
 map e ${{
-    filepath=$(test -z "$f" -o -d "$f" || echo "'$f'")
-    lf -remote "send ${id} direnv_shell \"nvim ${filepath}\""
+    # Use `+'e <filename>'` because `nvim <filename>` cannot load empty file somehow
+    load_command=$(test -z "$f" -o -d "$f" || echo " +'e $f'")
+    lf -remote "send ${id} direnv_shell \"nvim${load_command}\""
 }}
 map f :filter
 map F
