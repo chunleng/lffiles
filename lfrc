@@ -156,6 +156,8 @@ cmd python_init ${{
         exit 1
     }
 
+    folder_type=$1
+    shift
     package_to_install=""
     for package in "$@"; do
         package_to_install="${package_to_install} --dependency=${package}"
@@ -185,10 +187,7 @@ cmd python_init ${{
         asdf install poetry ${latest_poetry} && \
         asdf local poetry ${latest_poetry})
 
-    # Standard structure
-    mkdir ${path_name}
-    touch ${path_name}/__init__.py
-    touch main.py
+
     touch README.md
     echo '.venv' > .gitignore
     git init
@@ -199,7 +198,7 @@ cmd python_init ${{
         --dev-dependency=isort \
         --dev-dependency=black \
         ${package_to_install}
-    poetry install
+    poetry install --no-root
 
     # Direnv setup
     echo '# Since we are expecting the virtualenv to be in the same folder,
@@ -208,9 +207,23 @@ cmd python_init ${{
 export VIRTUAL_ENV=`pwd`/.venv
 export PATH=${VIRTUAL_ENV}/bin:${PATH}' > .envrc
     direnv allow .
+
+    # Structure base on project
+    case $folder_type in
+        app)
+            mkdir ${path_name}
+            touch ${path_name}/__init__.py
+            touch main.py
+            ;;
+        notebook)
+            mkdir notebook
+            touch notebook/sample.ipynb
+            ;;
+    esac
 }}
-map <space>cpp :python_init
-map <space>cpf :python_init fastapi
+map <space>cpp :python_init app
+map <space>cpf :python_init app fastapi
+map <space>cpn :python_init notebook euporie ipykernel
 
 # <space>cj for java
 cmd gradle_init ${{
