@@ -148,7 +148,7 @@ map -x :chmod -x; reload
 
 # <space>c for code template function
 # <space>cp for python
-cmd poetry_init ${{
+cmd python_init ${{
     set -eu
     trap 'catch' ERR
     function catch() {
@@ -164,6 +164,8 @@ cmd poetry_init ${{
     echo
     latest_python=$(asdf latest python)
     read -p 'Choose folder name: ' path_name
+    echo "The following Python versions are installed on this machine:"
+    asdf list python
     read -p "Choose Python version (${latest_python}): " py_version
 
     if [ -z "${py_version}" ]; then
@@ -175,37 +177,40 @@ cmd poetry_init ${{
     asdf local python ${py_version} || \
         (echo 'Python version not yet installed, installing now...' && \
          asdf install python ${py_version} && \
-         asdf local python ${py_version} && \
-         pip install poetry)
+         asdf local python ${py_version})
 
-    if [ $? -eq 0 ]; then
-        # Standard structure
-        mkdir ${path_name}
-        touch ${path_name}/__init__.py
-        touch main.py
-        touch README.md
-        echo '.venv' > .gitignore
-        git init
+    latest_poetry=`asdf latest poetry`
+    asdf local poetry ${latest_poetry} || \
+        (echo 'Poetry version "${latest_poetry}" not yet installed, installing now...' && \
+        asdf install poetry ${latest_poetry} && \
+        asdf local poetry ${latest_poetry})
 
-        poetry config virtualenvs.in-project true --local
-        eval poetry init -n \
-            --dev-dependency=pyright \
-            --dev-dependency=isort \
-            --dev-dependency=black \
-            ${package_to_install}
-        poetry install
+    # Standard structure
+    mkdir ${path_name}
+    touch ${path_name}/__init__.py
+    touch main.py
+    touch README.md
+    echo '.venv' > .gitignore
+    git init
 
-        # Direnv setup
-        echo '# Since we are expecting the virtualenv to be in the same folder,
+    poetry config virtualenvs.in-project true --local
+    eval poetry init -n \
+        --dev-dependency=pyright \
+        --dev-dependency=isort \
+        --dev-dependency=black \
+        ${package_to_install}
+    poetry install
+
+    # Direnv setup
+    echo '# Since we are expecting the virtualenv to be in the same folder,
 # we need to make poetry create the virtualenv in the same folder by doing the following
 #   poetry config virtualenvs.in-project true
 export VIRTUAL_ENV=`pwd`/.venv
 export PATH=${VIRTUAL_ENV}/bin:${PATH}' > .envrc
-        direnv allow .
-    fi
+    direnv allow .
 }}
-map <space>cpp :poetry_init
-map <space>cpf :poetry_init fastapi
+map <space>cpp :python_init
+map <space>cpf :python_init fastapi
 
 # <space>cj for java
 cmd gradle_init ${{
