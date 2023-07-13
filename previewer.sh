@@ -15,7 +15,7 @@ mimetype="$( file --dereference --brief --mime-type -- "${file_path}" )"
 tmp_dir="/tmp/lf/"
 
 function place_image() {
-    kitty +kitten icat --place ${width}x${height}@${previewer_x}x${previewer_y} --transfer-mode file --silent "${1}"
+    kitty +kitten icat --place ${width}x${height}@${previewer_x}x${previewer_y} --transfer-mode file --stdin no "${1}" < /dev/null > /dev/tty
 }
 
 function default_handler() {
