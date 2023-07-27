@@ -107,6 +107,7 @@ map <c-space> ${{
 
 map <tab> :toggle; down
 map <backtab> :up; toggle
+map <c-g> %pwd
 map <c-h> :set hidden!
 map <c-n> :down
 map <c-p> :up
