@@ -238,6 +238,8 @@ cmd gradle_init ${{
     echo
     example_java='oracle-19.0.2'
     read -p 'Choose folder name: ' path_name
+    echo "The following Java versions are installed on this machine:"
+    asdf list java
     read -p "Choose Java version (${example_java}): " java_version
 
     if [ -z "${java_version}" ]; then
@@ -262,7 +264,7 @@ cmd gradle_init ${{
 }}
 map <space>cjj :gradle_init
 
-# <space>cj for git
+# <space>cg for git
 cmd git_clone %{{
     echo 'Clone url: '
     read url
