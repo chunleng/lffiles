@@ -236,7 +236,7 @@ cmd rust_init ${{
     }
 
     echo
-    latest_rust=$(asdf latest rust)
+    latest_rust=$(asdf latest rust || echo "1.81.0")
     read -p 'Choose folder name: ' path_name
     echo "The following rust versions are installed on this machine:"
     asdf list rust
