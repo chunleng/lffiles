@@ -251,7 +251,7 @@ cmd rust_init ${{
     asdf local rust ${rust_version} || \
         (echo 'Rust version not yet installed, installing now...' && \
          asdf install rust ${rust_version} && \
-         asdf local python ${rust_version})
+         asdf local rust ${rust_version})
 
     touch README.md
     cargo init .
