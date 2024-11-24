@@ -329,4 +329,18 @@ cmd download ${{
     curl -L "$url" -o $output_path
 }}
 map <space>d :download
+
+
+# <space>i for image-related function
+# Convert to JPG
+map <space>icj :convert_image jpg
+cmd convert_image ${{
+    if [[ $fs == "" ]]; then
+        convert $f ${f%.*}.jpg > /dev/null 2>&1
+    else
+        for file in ${fs}; do
+            convert $file ${file%.*}.jpg > /dev/null 2>&1
+        done
+    fi
+}}
 # vim: syntax=vim:commentstring=#\ %s
