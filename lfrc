@@ -254,6 +254,7 @@ cmd rust_init ${{
          asdf local rust ${rust_version})
 
     touch README.md
+    echo "/target" > .gitignore
     cargo init .
 }}
 map <space>crr :rust_init
