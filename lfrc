@@ -345,4 +345,17 @@ cmd convert_image ${{
         done
     fi
 }}
+
+# Convert to pdf - This use a special function because we can print multiple image into one PDF
+map <space>icpdf :convert_image_to_pdf
+cmd convert_image_to_pdf ${{
+    if [[ $fs == "" ]]; then
+        convert $f ${f%.*}.pdf > /dev/null 2>&1
+    else
+        for file in ${fs}; do
+            convert $fs ${file%.*}.pdf > /dev/null 2>&1
+            break
+        done
+    fi
+}}
 # vim: syntax=vim:commentstring=#\ %s
