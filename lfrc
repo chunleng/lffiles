@@ -177,16 +177,16 @@ cmd python_init ${{
 
     mkdir -p ${path_name}
     cd ${path_name}
-    asdf local python ${py_version} || \
+    asdf set python ${py_version} || \
         (echo 'Python version not yet installed, installing now...' && \
          asdf install python ${py_version} && \
-         asdf local python ${py_version})
+         asdf set python ${py_version})
 
     latest_poetry=`asdf latest poetry`
-    asdf local poetry ${latest_poetry} || \
+    asdf set poetry ${latest_poetry} || \
         (echo 'Poetry version "${latest_poetry}" not yet installed, installing now...' && \
         asdf install poetry ${latest_poetry} && \
-        asdf local poetry ${latest_poetry})
+        asdf set poetry ${latest_poetry})
 
 
     touch README.md
@@ -248,10 +248,10 @@ cmd rust_init ${{
 
     mkdir -p ${path_name}
     cd ${path_name}
-    asdf local rust ${rust_version} || \
+    asdf set rust ${rust_version} || \
         (echo 'Rust version not yet installed, installing now...' && \
          asdf install rust ${rust_version} && \
-         asdf local rust ${rust_version})
+         asdf set rust ${rust_version})
 
     touch README.md
     echo "/target" > .gitignore
