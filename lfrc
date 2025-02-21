@@ -358,4 +358,11 @@ cmd convert_image_to_pdf ${{
         done
     fi
 }}
+
+map g/ :grep
+cmd grep ${{
+    read -p "Search Text: " url
+    rg --line-number --color=always --field-match-separator $'::' $url | \
+        fzf --delimiter $'::' --preview "bat --style=plain --color=always {1} --highlight-line {2} --line-range {2}:+8"
+}}
 # vim: syntax=vim:commentstring=#\ %s
