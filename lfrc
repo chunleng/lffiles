@@ -177,13 +177,15 @@ cmd python_init ${{
 
     mkdir -p ${path_name}
     cd ${path_name}
-    asdf set python ${py_version} || \
+    asdf set python ${py_version} && \
+        python --version >& /dev/null || \
         (echo 'Python version not yet installed, installing now...' && \
          asdf install python ${py_version} && \
          asdf set python ${py_version})
 
     latest_poetry=`asdf latest poetry`
-    asdf set poetry ${latest_poetry} || \
+    asdf set poetry ${latest_poetry} && \
+        poetry --version >& /dev/null || \
         (echo 'Poetry version "${latest_poetry}" not yet installed, installing now...' && \
         asdf install poetry ${latest_poetry} && \
         asdf set poetry ${latest_poetry})
@@ -248,7 +250,8 @@ cmd rust_init ${{
 
     mkdir -p ${path_name}
     cd ${path_name}
-    asdf set rust ${rust_version} || \
+    asdf set rust ${rust_version} && \
+        cargo --version >& /dev/null || \
         (echo 'Rust version not yet installed, installing now...' && \
          asdf install rust ${rust_version} && \
          asdf set rust ${rust_version})
@@ -281,10 +284,11 @@ cmd gradle_init ${{
 
     mkdir -p ${path_name}
     cd ${path_name}
-    asdf local java ${java_version} || \
+    asdf set java ${java_version} && \
+        java -version >& /dev/null || \
         (echo 'Java version not yet installed, installing now...' && \
          asdf install java ${java_version} && \
-         asdf local java ${java_version})
+         asdf set java ${java_version})
 
     if [ $? -eq 0 ]; then
         gradle init \
