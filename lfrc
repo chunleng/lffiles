@@ -29,6 +29,7 @@ map <esc> :unselect; clear; setfilter
 map <space>
 map <space>b $btop
 map <space>g :direnv_shell "NOAERIAL=1 EDITOR='nvim +startinsert' lazygit"
+map <space>m ${{ spotify_player }}
 map <space>j+ $autojump -i 100
 map <space>j- $autojump -d 100
 map <space>j? $autojump -s|less
