@@ -28,13 +28,15 @@ map <esc> :unselect; clear; setfilter
 # unmap original (toggle-selection)
 map <space>
 map <space>b $btop
-map <space>g :direnv_shell "NOAERIAL=1 EDITOR='nvim +startinsert' lazygit"
-map <space>m ${{
+cmd lazygit :direnv_shell "NOAERIAL=1 EDITOR='nvim +startinsert' lazygit"
+map <space>g :lazygit
+cmd music ${{
     spotify_appconfig="${HOME}/.config/spotify-player/app.toml"
     cp ${spotify_appconfig}{.example,}
     echo "name = \"$(whoami)@$(hostname)\"" >> ${spotify_appconfig}
     spotify_player
 }}
+map <space>m :music
 map <space>j+ $autojump -i 100
 map <space>j- $autojump -d 100
 map <space>j? $autojump -s|less
@@ -124,11 +126,12 @@ map a %{{
     [[ $r = */ ]] && mkdir -p $r || (mkdir -p `dirname $r` && touch $r)
 }}
 
-map e ${{
+cmd edit ${{
     # Use `+'e <filename>'` because `nvim <filename>` cannot load empty file somehow
     load_command=$(test -z "$f" -o -d "$f" || echo " +'e $f'")
     lf -remote "send ${id} direnv_shell \"nvim${load_command}\""
 }}
+map e :edit
 map f :filter
 map F
 map gd :cd ~/Downloads/
