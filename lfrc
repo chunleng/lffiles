@@ -378,4 +378,24 @@ cmd grep ${{
     rg --line-number --color=always --field-match-separator $'::' "$search_text" | \
         fzf --delimiter $'::' --preview "bat --style=plain --color=always {1} --highlight-line {2} --line-range {2}:+8"
 }}
+
+
+map <space>w :workspace
+cmd workspace ${{
+    current_dir=$(pwd)
+    kitty @ send-text "e"
+    kitty @ set-tab-title $(basename ${current_dir})
+    # Launch a window on the same tab with the same directory
+    window_id=$(kitty @ launch --keep-focus)
+    kitty @ send-text -m id:${window_id} ":cd ${current_dir}\nw"
+
+    # Launch another tab for bg jobs
+    window_id=$(kitty @ launch --type=tab --location after --keep-focus)
+    kitty @ set-tab-title -m id:${window_id} $(basename `pwd`)bg
+    kitty @ send-text -m id:${window_id} ":cd ${current_dir}\n:lazygit\n"
+
+    # Launch a window on the bg tab
+    window_id=$(kitty @ launch -m id:${window_id} --keep-focus)
+    kitty @ send-text -m id:${window_id} ":cd ${current_dir}\n"
+}}
 # vim: syntax=vim:commentstring=#\ %s
