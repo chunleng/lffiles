@@ -126,6 +126,17 @@ map a %{{
     [[ $r = */ ]] && mkdir -p $r || (mkdir -p `dirname $r` && touch $r)
 }}
 
+cmd open ${{
+    file_mime=$(file --mime-type "$f"|rev|cut -f-1 -d" "|rev)
+    case "$file_mime" in
+        text/*|inode/x-empty|application/json)
+            lf -remote "send ${id} direnv_shell \"nvim +'e $f'\""
+            ;;
+        *)
+            open "$f"
+            ;;
+    esac
+}}
 cmd edit ${{
     # Use `+'e <filename>'` because `nvim <filename>` cannot load empty file somehow
     load_command=$(test -z "$f" -o -d "$f" || echo " +'e $f'")
@@ -398,4 +409,5 @@ cmd workspace ${{
     window_id=$(kitty @ launch -m id:${window_id} --keep-focus)
     kitty @ send-text -m id:${window_id} ":cd ${current_dir}\n"
 }}
+
 # vim: syntax=vim:commentstring=#\ %s
