@@ -62,11 +62,7 @@ map <space>zx %{{
         fi
         mkdir -p "${extract_path}"
 
-        if [[ $mimetype = "application/x-tar" || $mimetype = "application/gzip" ]]; then
-            tar -xvf $f --directory "${extract_path}"
-        else
-            unzip -v $f -d "${extract_path}"
-        fi
+        7z x $f -o${extract_path}
         echo "Extracted to ${extract_path}"
     else
         echo "Extraction of this filetype is not supported"
@@ -76,12 +72,6 @@ cmd zip %{{
     if [[ $fs == "" ]]; then
         echo "Please select the file to archive"
     else
-        zip_name=""
-        while [[ $zip_name = "" ]]; do
-            echo "Archive Name: "
-            read zip_name
-        done
-
         files=""
         for file in ${fs}; do
             if [[ "${PWD}" != "$(dirname $file)" ]]; then
@@ -93,14 +83,18 @@ cmd zip %{{
 
         case "$1" in
             tar)
-                eval "tar -cvf \"${zip_name}.tar\"$files";;
+                output_file=__tmp_7z_output.tar;;
             gzip)
-                eval "tar -cvzf \"${zip_name}.tar.gz\"$files";;
+                output_file=__tmp_7z_output.tar.gz;;
             zip)
-                eval "zip \"${zip_name}.zip\"$files";;
+                output_file=__tmp_7z_output.zip;;
             *)
-                echo "${1} is a supported zip type"
+                echo "${1} is not a supported zip type"
+                exit 1
         esac
+
+        eval "7z a \"${output_file}\"$files"
+        echo "added to ${output_file}"
     fi
 }}
 # create zip - tar
