@@ -380,8 +380,12 @@ cmd convert_image_to_pdf ${{
 map g/ :grep
 cmd grep ${{
     read -p "Search Text: " search_text
-    rg --line-number --color=always --field-match-separator $'::' "$search_text" | \
-        fzf --delimiter $'::' --preview "bat --style=plain --color=always {1} --highlight-line {2} --line-range {2}:+8"
+    jump_target=$(rg --line-number --color=always --field-match-separator $'::' "$search_text" | \
+        fzf --delimiter $'::' --preview "bat --style=plain --color=always {1} --highlight-line {2} --line-range {2}:+8" | \
+        cut -d'' -f1)
+
+    lf -remote "send ${id} cd '$(dirname ${jump_target})'"
+    lf -remote "send ${id} select '$(basename ${jump_target})'"
 }}
 
 
