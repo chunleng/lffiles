@@ -197,25 +197,23 @@ cmd python_init ${{
          asdf install python ${py_version} && \
          asdf set python ${py_version})
 
-    latest_poetry=`asdf latest poetry`
-    asdf set poetry ${latest_poetry} && \
-        poetry --version >& /dev/null || \
-        (echo 'Poetry version "${latest_poetry}" not yet installed, installing now...' && \
-        asdf install poetry ${latest_poetry} && \
-        asdf set poetry ${latest_poetry})
+    latest_uv=`asdf latest uv`
+    asdf set uv ${latest_uv} && \
+        uv --version >& /dev/null || \
+        (echo 'UV version "${latest_uv}" not yet installed, installing now...' && \
+        asdf install uv ${latest_uv} && \
+        asdf set uv ${latest_uv})
 
 
     touch README.md
     echo '.venv' > .gitignore
     git init
 
-    poetry config virtualenvs.in-project true --local
-    eval poetry init -n \
-        --dev-dependency=pyright \
-        --dev-dependency=isort \
-        --dev-dependency=black \
-        ${package_to_install}
-    poetry install --no-root
+    uv init .
+    uv add --dev pyright ruff
+    if [ $# -gt 0 ]; then
+        uv add $@
+    fi
 
     # Direnv setup
     echo '# Since we are expecting the virtualenv to be in the same folder,
