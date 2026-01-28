@@ -30,13 +30,6 @@ map <space>
 map <space>b $btop
 cmd lazygit :direnv_shell "NOAERIAL=1 EDITOR='nvim +startinsert' lazygit"
 map <space>g :lazygit
-cmd music ${{
-    spotify_appconfig="${HOME}/.config/spotify-player/app.toml"
-    cp ${spotify_appconfig}{.example,}
-    echo "name = \"$(whoami)@$(hostname)\"" >> ${spotify_appconfig}
-    spotify_player
-}}
-map <space>m :music
 map <space>j+ $autojump -i 100
 map <space>j- $autojump -d 100
 map <space>j? $autojump -s|less
