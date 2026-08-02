@@ -383,20 +383,18 @@ cmd grep ${{
 map <space>w :workspace
 cmd workspace ${{
     current_dir=$(pwd)
-    kitty @ send-text "e"
+    lf -remote "send ${id} edit"
     kitty @ set-tab-title $(basename ${current_dir})
+
     # Launch a window on the same tab with the same directory
-    window_id=$(kitty @ launch --keep-focus)
-    kitty @ send-text -m id:${window_id} ":cd ${current_dir}\nw"
+    window_id=$(kitty @ launch --cwd=current --keep-focus -- lf -command 'push w')
 
     # Launch another tab for bg jobs
-    window_id=$(kitty @ launch --type=tab --location after --keep-focus)
-    kitty @ set-tab-title -m id:${window_id} $(basename `pwd`)bg
-    kitty @ send-text -m id:${window_id} ":cd ${current_dir}\n:lazygit\n"
+    window_id=$(kitty @ launch --type=tab --location after --cwd=current --keep-focus \
+        --tab-title "$(basename ${current_dir})bg" -- lf -command "lazygit")
 
     # Launch a window on the bg tab
-    window_id=$(kitty @ launch -m id:${window_id} --keep-focus)
-    kitty @ send-text -m id:${window_id} ":cd ${current_dir}\n"
+    window_id=$(kitty @ launch -m id:${window_id} --cwd=current --keep-focus)
 }}
 
 # vim: syntax=vim:commentstring=#\ %s
