@@ -203,7 +203,7 @@ cmd python_init ${{
     git init
 
     uv init .
-    uv add --dev pyright ruff
+    uv add --dev ty ruff
     if [ $# -gt 0 ]; then
         uv add $@
     fi
