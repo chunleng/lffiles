@@ -387,14 +387,16 @@ cmd workspace ${{
     kitty @ set-tab-title $(basename ${current_dir})
 
     # Launch a window on the same tab with the same directory
-    window_id=$(kitty @ launch --cwd=current --keep-focus -- lf -command 'push w')
+    window_id=$(kitty @ launch --cwd=current --keep-focus -- lf)
+    kitty @ send-text -m id:${window_id} "w"
 
     # Launch another tab for bg jobs
-    window_id=$(kitty @ launch --type=tab --location after --cwd=current --keep-focus \
-        --tab-title "$(basename ${current_dir})bg" -- lf -command "lazygit")
+    window_id=$(kitty @ launch --type=tab --location after --keep-focus \
+        --tab-title "$(basename ${current_dir})bg" -- lf -command "cd ${current_dir}")
+    kitty @ send-text -m id:${window_id} ":lazygit\n"
 
     # Launch a window on the bg tab
-    window_id=$(kitty @ launch -m id:${window_id} --cwd=current --keep-focus)
+    window_id=$(kitty @ launch -m id:${window_id} --keep-focus -- lf -command "cd ${current_dir}")
 }}
 
 # vim: syntax=vim:commentstring=#\ %s
