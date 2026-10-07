@@ -17,10 +17,14 @@ set promptfmt "\033[38;5;240m【  %u  %h 】\033[1m%w \033[38;5;0m\033[48;
 # Mappings #
 ############
 
+# The original shell command does not invoke direnv
+cmd direnv_shell ${{ direnv exec . $SHELL -i }}
+map w :direnv_shell
+
 # using `$SHELL` and `cd .` to ensure direnv is working
-cmd direnv_shell ${{
+cmd direnv_shell_command ${{
     # Used -s to read from standard in instead of zsh -c option because lf creates an extra zombie zsh process
-    echo "cd . && $1" | $SHELL --interactive -s
+    echo "$1" | direnv exec . $SHELL -i -s
 }}
 # Remove toggle and clear delete, copy selection or filter
 map <esc> :unselect; clear; setfilter
@@ -28,7 +32,7 @@ map <esc> :unselect; clear; setfilter
 # unmap original (toggle-selection)
 map <space>
 map <space>b $btop
-cmd lazygit :direnv_shell "NOAERIAL=1 EDITOR='nvim +startinsert' lazygit"
+cmd lazygit :direnv_shell_command "NOAERIAL=1 EDITOR='nvim +startinsert' lazygit"
 map <space>g :lazygit
 map <space>j+ $autojump -i 100
 map <space>j- $autojump -d 100
@@ -117,7 +121,7 @@ cmd open ${{
     file_mime=$(file --mime-type "$f"|rev|cut -f-1 -d" "|rev)
     case "$file_mime" in
         text/*|inode/x-empty|application/json)
-            lf -remote "send ${id} direnv_shell \"nvim +'e $f'\""
+            lf -remote "send ${id} direnv_shell_command \"nvim +'e $f'\""
             ;;
         *)
             open "$f"
@@ -127,7 +131,7 @@ cmd open ${{
 cmd edit ${{
     # Use `+'e <filename>'` because `nvim <filename>` cannot load empty file somehow
     load_command=$(test -z "$f" -o -d "$f" || echo " +'e $f'")
-    lf -remote "send ${id} direnv_shell \"nvim${load_command}\""
+    lf -remote "send ${id} direnv_shell_command \"nvim${load_command}\""
 }}
 map e :edit
 map f :filter
@@ -387,16 +391,14 @@ cmd workspace ${{
     kitty @ set-tab-title $(basename ${current_dir})
 
     # Launch a window on the same tab with the same directory
-    window_id=$(kitty @ launch --cwd=current --keep-focus -- lf)
-    kitty @ send-text -m id:${window_id} "w"
+    window_id=$(kitty @ launch --cwd=current --keep-focus -- $SHELL -ics "lf -command 'direnv_shell'")
 
     # Launch another tab for bg jobs
-    window_id=$(kitty @ launch --type=tab --location after --keep-focus \
-        --tab-title "$(basename ${current_dir})bg" -- lf -command "cd ${current_dir}")
-    kitty @ send-text -m id:${window_id} ":lazygit\n"
+    window_id=$(kitty @ launch --type=tab --cwd=current --location after --keep-focus \
+        --tab-title "$(basename ${current_dir})bg" -- $SHELL -ics "lf -command 'lazygit'")
 
     # Launch a window on the bg tab
-    window_id=$(kitty @ launch -m id:${window_id} --keep-focus -- lf -command "cd ${current_dir}")
+    window_id=$(kitty @ launch -m id:${window_id} --cwd=current --keep-focus -- $SHELL -ics lf)
 }}
 
 # vim: syntax=vim:commentstring=#\ %s
