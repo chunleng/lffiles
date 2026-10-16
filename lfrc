@@ -401,4 +401,8 @@ cmd workspace ${{
     window_id=$(kitty @ launch -m id:${window_id} --cwd=current --keep-focus -- $SHELL -ics lf)
 }}
 
+cmd sleep ${{
+    sleep $1
+}}
+
 # vim: syntax=vim:commentstring=#\ %s
